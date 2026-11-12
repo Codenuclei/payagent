@@ -6,6 +6,15 @@ export interface PayPalConfig {
   sandbox: boolean;
 }
 
+export interface ConnectionTestResult {
+  connected: boolean;
+  mode: "LIVE_SANDBOX" | "SIMULATION";
+  message: string;
+  scopes?: string;
+  expiresIn?: number;
+  statusCode?: number;
+}
+
 export class PayPalClient {
   private clientId: string;
   private clientSecret: string;
@@ -22,7 +31,6 @@ export class PayPalClient {
       ? "https://api-m.sandbox.paypal.com"
       : "https://api-m.paypal.com";
 
-    // If no credentials supplied, run high-fidelity Sandbox Simulation mode
     if (!this.clientId || !this.clientSecret) {
       this.isSimulation = true;
     }
@@ -32,13 +40,25 @@ export class PayPalClient {
     return this.isSimulation;
   }
 
-  private async getAccessToken(): Promise<string> {
-    if (this.isSimulation) {
-      return "simulated_paypal_access_token_" + Date.now();
-    }
+  public get hasCredentials(): boolean {
+    return Boolean(this.clientId && this.clientSecret);
+  }
 
-    if (this.accessToken && Date.now() < this.tokenExpiresAt) {
-      return this.accessToken;
+  public setCredentials(clientId: string, clientSecret: string): void {
+    this.clientId = clientId.trim();
+    this.clientSecret = clientSecret.trim();
+    this.accessToken = null;
+    this.tokenExpiresAt = 0;
+    this.isSimulation = !this.clientId || !this.clientSecret;
+  }
+
+  public async testLiveConnection(): Promise<ConnectionTestResult> {
+    if (!this.clientId || !this.clientSecret) {
+      return {
+        connected: false,
+        mode: "SIMULATION",
+        message: "No PayPal Developer credentials configured. Running in high-fidelity sandbox simulation mode.",
+      };
     }
 
     const auth = Buffer.from(`${this.clientId}:${this.clientSecret}`).toString("base64");
@@ -53,20 +73,66 @@ export class PayPalClient {
       });
 
       if (!res.ok) {
-        console.warn(`[PayPal] OAuth token request failed (${res.status}). Falling back to simulation mode.`);
-        this.isSimulation = true;
-        return "simulated_paypal_access_token_" + Date.now();
+        const errorBody = await res.text();
+        return {
+          connected: false,
+          mode: "SIMULATION",
+          statusCode: res.status,
+          message: `PayPal OAuth authentication rejected (${res.status}): ${errorBody}`,
+        };
       }
 
-      const data = (await res.json()) as { access_token: string; expires_in: number };
+      const data = (await res.json()) as { access_token: string; expires_in: number; scope?: string };
       this.accessToken = data.access_token;
       this.tokenExpiresAt = Date.now() + (data.expires_in - 60) * 1000;
+      this.isSimulation = false;
+
+      return {
+        connected: true,
+        mode: "LIVE_SANDBOX",
+        message: "Successfully authenticated with PayPal Developer Platform (api-m.sandbox.paypal.com).",
+        scopes: data.scope,
+        expiresIn: data.expires_in,
+        statusCode: 200,
+      };
+    } catch (err: any) {
+      return {
+        connected: false,
+        mode: "SIMULATION",
+        message: `Network failure connecting to PayPal Sandbox: ${err?.message || err}`,
+      };
+    }
+  }
+
+  private async getAccessToken(): Promise<string> {
+    if (this.isSimulation) {
+      return "simulated_paypal_access_token_" + Date.now();
+    }
+
+    if (this.accessToken && Date.now() < this.tokenExpiresAt) {
       return this.accessToken;
-    } catch (err) {
-      console.warn(`[PayPal] Connection error. Switching to sandbox simulation mode.`);
+    }
+
+    const auth = Buffer.from(`${this.clientId}:${this.clientSecret}`).toString("base64");
+    const res = await fetch(`${this.baseUrl}/v1/oauth2/token`, {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${auth}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: "grant_type=client_credentials",
+    });
+
+    if (!res.ok) {
+      console.warn(`[PayPal] Live OAuth failed (${res.status}). Falling back to simulation mode.`);
       this.isSimulation = true;
       return "simulated_paypal_access_token_" + Date.now();
     }
+
+    const data = (await res.json()) as { access_token: string; expires_in: number };
+    this.accessToken = data.access_token;
+    this.tokenExpiresAt = Date.now() + (data.expires_in - 60) * 1000;
+    return this.accessToken;
   }
 
   public async createOrder(orderReq: CreateOrderRequest): Promise<PayPalOrderResponse> {

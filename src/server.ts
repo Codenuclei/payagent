@@ -98,6 +98,34 @@ const server = Bun.serve<{ id: string }>({
       }
     }
 
+    if (url.pathname === "/api/paypal/credentials" && req.method === "GET") {
+      return jsonResponse({
+        hasCredentials: agent.getPayPalClient().hasCredentials,
+        simulationMode: agent.getPayPalClient().simulationMode,
+        targetEndpoint: "https://api-m.sandbox.paypal.com",
+      });
+    }
+
+    if (url.pathname === "/api/paypal/credentials" && req.method === "POST") {
+      try {
+        const body = (await req.json()) as { clientId: string; clientSecret: string };
+        agent.getPayPalClient().setCredentials(body.clientId, body.clientSecret);
+        const connectionTest = await agent.getPayPalClient().testLiveConnection();
+        return jsonResponse({
+          success: true,
+          connectionTest,
+          simulationMode: agent.getPayPalClient().simulationMode,
+        });
+      } catch (err: any) {
+        return jsonResponse({ error: err?.message || "Failed to update PayPal credentials" }, 400);
+      }
+    }
+
+    if (url.pathname === "/api/paypal/test-connection" && req.method === "POST") {
+      const result = await agent.getPayPalClient().testLiveConnection();
+      return jsonResponse(result);
+    }
+
     if (url.pathname === "/api/paypal/orders" && req.method === "GET") {
       return jsonResponse({
         orders: agent.getTransactions(),
