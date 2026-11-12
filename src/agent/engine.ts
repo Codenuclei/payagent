@@ -506,6 +506,12 @@ export class CommerceAgent {
             amount: {
               currency_code: "USD",
               value: matchedItem.priceUSD.toFixed(2),
+              breakdown: {
+                item_total: {
+                  currency_code: "USD",
+                  value: matchedItem.priceUSD.toFixed(2),
+                },
+              },
             },
             items: [
               {
@@ -607,6 +613,12 @@ export class CommerceAgent {
           amount: {
             currency_code: "USD",
             value: matchedItem.priceUSD.toFixed(2),
+            breakdown: {
+              item_total: {
+                currency_code: "USD",
+                value: matchedItem.priceUSD.toFixed(2),
+              },
+            },
           },
           items: [
             {
@@ -640,13 +652,75 @@ export class CommerceAgent {
     );
 
     // Step 5: SETTLEMENT
-    const captureResult = await this.paypalClient.captureOrder(order.id);
-    const captureId =
-      captureResult.purchase_units?.[0]?.payments?.captures?.[0]?.id ||
-      "CAP-" + Math.random().toString(36).substring(2, 9).toUpperCase();
+    let captureResult: PayPalOrderResponse | null = null;
+    let captureId: string | undefined;
 
-    this.guardrails.recordSettlement(matchedItem.priceUSD);
-    this.velocity.recordTransaction();
+    try {
+      captureResult = await this.paypalClient.captureOrder(order.id);
+      captureId =
+        captureResult.purchase_units?.[0]?.payments?.captures?.[0]?.id ||
+        "CAP-" + Math.random().toString(36).substring(2, 9).toUpperCase();
+
+      this.guardrails.recordSettlement(matchedItem.priceUSD);
+      this.velocity.recordTransaction();
+    } catch (captureErr: any) {
+      if (captureErr?.message?.includes("ORDER_NOT_APPROVED")) {
+        const pendingTx: TransactionRecord = {
+          id: "tx_" + Math.random().toString(36).substring(2, 10),
+          paypalOrderId: order.id,
+          itemName: matchedItem.name,
+          vendor: matchedItem.vendorName,
+          category: matchedItem.category,
+          amount: matchedItem.priceUSD,
+          currency: "USD",
+          status: "APPROVED_MANUAL",
+          policyCheck: {
+            passed: true,
+            reason: "Live PayPal Sandbox Order created. Waiting for payer authorization.",
+            riskScore: checkResult.riskScore,
+          },
+          agentIntent: detectedIntent,
+          timestamp: new Date().toISOString(),
+          approvalUrl: approveLink,
+          rawResponse: order,
+        };
+        this.transactions.unshift(pendingTx);
+        this.pendingApprovals.set(order.id, {
+          orderId: order.id,
+          runId,
+          item: matchedItem,
+          checkResult,
+          order,
+          agentIntent: detectedIntent,
+          createdAt: new Date().toISOString(),
+        });
+
+        recordEvent(
+          4,
+          "PAYPAL_ORDER_CREATED",
+          "requires_approval",
+          {
+            orderId: order.id,
+            approvalUrl: approveLink,
+            actionRequired: "Redirect buyer to PayPal sandbox checkout link to complete approval.",
+          },
+          `Live PayPal Sandbox order ${order.id} staged! Click checkout link to approve: ${approveLink}`
+        );
+
+        return {
+          runId,
+          prompt,
+          success: true,
+          blocked: false,
+          requiresHumanApproval: true,
+          item: matchedItem,
+          transaction: pendingTx,
+          simulationReport: preflight,
+          events,
+        };
+      }
+      throw captureErr;
+    }
 
     const settledTx: TransactionRecord = {
       id: "tx_" + Math.random().toString(36).substring(2, 10),
