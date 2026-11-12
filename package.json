@@ -1,0 +1,22 @@
+{
+  "name": "payagent",
+  "version": "1.0.0",
+  "description": "PayAgent: Autonomous Agentic Commerce Protocol with PayPal Sandbox Budgeting Guardrails",
+  "main": "src/server.ts",
+  "type": "module",
+  "scripts": {
+    "start": "bun run src/server.ts",
+    "dev": "bun --watch src/server.ts",
+    "test": "bun test",
+    "demo": "bun run src/cli.ts"
+  },
+  "keywords": [
+    "paypal",
+    "agentic-commerce",
+    "ai-agent",
+    "guardrails",
+    "fintech"
+  ],
+  "author": "Codenuclei",
+  "license": "MIT"
+}
