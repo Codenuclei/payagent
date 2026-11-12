@@ -16,18 +16,24 @@ Autonomous software development and operations agents are now capable of writing
 We built PayAgent to bridge this trust gap. By placing a programmatic guardrail between the LLM and the payment gateway, companies can safely equip AI workers with purchasing power.
 
 ## What It Does
-1. Evaluates incoming purchase intents against real-time budget policies.
-2. Checks merchant whitelist categories, reputation scores, and security blocklists.
-3. Automatically settles low-risk, approved purchases via PayPal Orders v2.
-4. Escalates orders above configured spending thresholds to human operators.
-5. Maintains a cryptographically verifiable audit trail of all transactions.
-6. Provides a dual-mode PayPal client that operates against live PayPal Sandbox or an internal high-fidelity simulator.
+1. **AdversarialShield & Shadow Simulation Box**: Intercepts prompt injections, instruction overrides, delimiter density attacks, and unverified crypto wallet redirects before any financial state is touched. Runs a dry-run pre-flight simulation before production checkout.
+2. **Deterministic Guardrails Engine**: Evaluates purchase intents against single-transaction caps ($35), rolling 24h daily spend limits ($150), merchant whitelist categories, and vendor trust scores.
+3. **Dual-Mode PayPal REST v2 Engine**: Seamlessly connects to `https://api-m.sandbox.paypal.com` with real OAuth2 Bearer token exchange, order creation (`/v2/checkout/orders`), item breakdown validation, and capture settlement.
+4. **Human-in-the-Loop Escalation**: Flagged purchases above autonomous threshold ($25) pause execution and stage the order with a direct PayPal sandbox checkout URL for operator authorization.
+5. **Cryptographic SHA-256 Audit Ledger**: Hash-chains every transaction into an immutable Merkle audit log with tamper-evident nonce verification and replay attack prevention.
+6. **Live Telemetry & WebSocket Stepper**: Streams 5-stage pipeline reasoning in real-time to a sleek shadcn/ui zinc web console.
 
 ## How We Built It
-- Runtime: Bun with native TypeScript compilation.
-- Payment Integration: Direct REST communication with PayPal Orders v2 endpoints (`/v2/checkout/orders` and `/v2/checkout/orders/{id}/capture`).
-- Guardrails Engine: Deterministic policy evaluation engine with daily rolling aggregate limits, single-order caps, category validation, and risk score calculation.
-- Testing Suite: Bun native test runner covering unit boundary policies and end-to-end PayPal checkout flows.
+- **Runtime**: Bun with native TypeScript compilation.
+- **Payment Gateway**: PayPal Orders v2 REST API (`/v2/checkout/orders` & `/v2/checkout/orders/{id}/capture`) with OAuth2 client credentials grant.
+- **Security & Hardening**:
+  - `AdversarialShield`: Regex and semantic heuristic detector for instruction hijacking and wallet extraction.
+  - `VelocityEngine`: Sliding-window burst attack and runaway agent execution loop throttler.
+  - `SimulationBox`: Pre-flight sandbox testing suite.
+  - `CryptographicAuditLedger`: SHA-256 hash-chained block records.
+  - `PayPalWebhookEngine`: HMAC-SHA256 signature verification for asynchronous payment capture notifications.
+- **Frontend**: Responsive stock shadcn/ui zinc dark theme with zero external bundle bloat, real-time WebSocket state synchronization, interactive policy sliders, and transaction inspector modal.
+- **Testing**: 18/18 passing native tests covering guardrail limits, attack vectors, and live PayPal Sandbox integration.
 
 ## Challenges Overcome
 - Zero Network Friction: Developed a simulation layer matching the PayPal Orders v2 response schema so tests and local development run reliably without network flakiness.
