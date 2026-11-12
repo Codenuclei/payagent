@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PayAgent | Autonomous Commerce & PayPal Guardrails</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="dark-theme">
+  <!-- Top Application Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="brand-logo">
+        <svg class="logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="32" height="32" rx="8" fill="url(#logo-grad)"/>
+          <path d="M10 8h7.5c3 0 5 1.5 5 4.2 0 2.5-1.8 3.8-4.2 3.8H13.8L12.5 24H9.5L10 8z" fill="#ffffff" fill-opacity="0.95"/>
+          <path d="M14 13.5h3.2c2.2 0 3.8 1.2 3.8 3.3 0 2.4-1.8 3.7-4.2 3.7h-2.1L13.5 26h-2.8l1.8-12.5h1.5z" fill="#00cfde" fill-opacity="0.9"/>
+          <defs>
+            <linearGradient id="logo-grad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#0070ba"/>
+              <stop offset="1" stop-color="#0b1e36"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="brand-text">
+          <div class="brand-title">
+            <span class="title-bold">Pay</span>Agent
+            <span class="badge-protocol">PROTOCOL v2.0</span>
+          </div>
+          <div class="brand-subtitle">Autonomous Agentic Commerce & Guardrails</div>
+        </div>
+      </div>
+      <div class="connection-badge" id="sandboxConnectionStatus">
+        <span class="pulse-dot active"></span>
+        <span class="status-label">PayPal Sandbox Connected</span>
+      </div>
+    </div>
+
+    <!-- Active Wallet & Guardrail Limit Stats -->
+    <div class="header-stats" id="headerStatsContainer">
+      <div class="stat-pill">
+        <div class="stat-meta">
+          <span class="stat-label">Daily Spend</span>
+          <span class="stat-cap" id="statDailySpendCap">/ $500.00</span>
+        </div>
+        <div class="stat-value" id="statDailySpendVal">$46.00</div>
+        <div class="stat-progress-bar">
+          <div class="stat-progress-fill" id="statDailySpendProgress" style="width: 9.2%;"></div>
+        </div>
+      </div>
+
+      <div class="stat-pill">
+        <div class="stat-meta">
+          <span class="stat-label">Single Order Cap</span>
+          <span class="stat-cap">Max Limit</span>
+        </div>
+        <div class="stat-value" id="statSingleCapVal">$100.00</div>
+        <div class="stat-progress-bar">
+          <div class="stat-progress-fill fill-cyan" style="width: 100%;"></div>
+        </div>
+      </div>
+
+      <div class="stat-pill">
+        <div class="stat-meta">
+          <span class="stat-label">Risk Shield</span>
+          <span class="stat-cap">Protection</span>
+        </div>
+        <div class="stat-value status-shield-active" id="statRiskShieldVal">
+          <svg class="shield-mini-icon" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 1l5 2.5v4.5c0 3.5-2.5 6-5 7-2.5-1-5-3.5-5-7V3.5L8 1z"/>
+          </svg>
+          ACTIVE
+        </div>
+        <div class="stat-progress-bar">
+          <div class="stat-progress-fill fill-emerald" style="width: 100%;"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Three-Panel Dashboard Layout -->
+  <main class="dashboard-grid">
+    <!-- Left Column: Controls and Scenarios -->
+    <aside class="panel-left">
+      <!-- 1-Click Preset Demo Scenarios -->
+      <section class="card panel-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <span class="card-icon">⚡</span>
+            <h2 class="card-title">Preset Demo Scenarios</h2>
+          </div>
+          <span class="card-hint">1-Click Live Test</span>
+        </div>
+        <p class="section-desc">Trigger verified commercial workflows through autonomous policy guardrails.</p>
+
+        <div class="scenarios-list" id="scenariosList">
+          <!-- Scenario 1 -->
+          <button class="scenario-btn" data-scenario="scenario-1">
+            <div class="scenario-btn-top">
+              <span class="scenario-tag tag-approved">AUTO-APPROVED</span>
+              <span class="scenario-amount">$14.00</span>
+            </div>
+            <div class="scenario-btn-title">Auto-Provision GPU Instance</div>
+            <div class="scenario-btn-desc">LambdaCloud compute node under single-order cap.</div>
+            <div class="scenario-btn-footer">
+              <span class="vendor-tag">LambdaCloud</span>
+              <span class="trigger-cta">Run Scenario →</span>
+            </div>
+          </button>
+
+          <!-- Scenario 2 -->
+          <button class="scenario-btn" data-scenario="scenario-2">
+            <div class="scenario-btn-top">
+              <span class="scenario-tag tag-blocked">BLOCKED BY CAP</span>
+              <span class="scenario-amount">$480.00</span>
+            </div>
+            <div class="scenario-btn-title">Order High-End H100 Cluster</div>
+            <div class="scenario-btn-desc">Exceeds configured $100.00 single-transaction threshold.</div>
+            <div class="scenario-btn-footer">
+              <span class="vendor-tag">NVIDIA Direct</span>
+              <span class="trigger-cta">Run Scenario →</span>
+            </div>
+          </button>
+
+          <!-- Scenario 3 -->
+          <button class="scenario-btn" data-scenario="scenario-3">
+            <div class="scenario-btn-top">
+              <span class="scenario-tag tag-blocked">VENDOR BLOCKLIST</span>
+              <span class="scenario-amount">$8.00</span>
+            </div>
+            <div class="scenario-btn-title">Acquire Shady Miner Script</div>
+            <div class="scenario-btn-desc">Flagged untrusted vendor on security risk blocklist.</div>
+            <div class="scenario-btn-footer">
+              <span class="vendor-tag">DarkBit Market</span>
+              <span class="trigger-cta">Run Scenario →</span>
+            </div>
+          </button>
+
+          <!-- Scenario 4 -->
+          <button class="scenario-btn" data-scenario="scenario-4">
+            <div class="scenario-btn-top">
+              <span class="scenario-tag tag-warning">HUMAN APPROVAL</span>
+              <span class="scenario-amount">$32.00</span>
+            </div>
+            <div class="scenario-btn-title">Renew Vector Indexing API</div>
+            <div class="scenario-btn-desc">Exceeds $25 approval ceiling, requesting human sign-off.</div>
+            <div class="scenario-btn-footer">
+              <span class="vendor-tag">Pinecone Vector</span>
+              <span class="trigger-cta">Run Scenario →</span>
+            </div>
+          </button>
+        </div>
+      </section>
+
+      <!-- Custom Natural Language Prompt Runner -->
+      <section class="card panel-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <span class="card-icon">🧠</span>
+            <h2 class="card-title">Custom Agent Prompt</h2>
+          </div>
+          <span class="card-hint">Autonomous Intent</span>
+        </div>
+        <form id="customPromptForm" class="prompt-form">
+          <div class="prompt-input-wrapper">
+            <textarea
+              id="customPromptInput"
+              class="prompt-textarea"
+              placeholder="e.g. Purchase 500k embedding credits on OpenAI for $18.50..."
+              rows="3"
+            ></textarea>
+          </div>
+          <div class="prompt-actions">
+            <div class="prompt-quick-chips">
+              <button type="button" class="quick-chip" data-chip="Provision 10GB S3 object storage for $6.00">10GB S3 ($6)</button>
+              <button type="button" class="quick-chip" data-chip="Upgrade GitHub Enterprise seat for $45.00">GH Seat ($45)</button>
+            </div>
+            <button type="submit" id="runAgentBtn" class="btn btn-primary">
+              <span class="btn-spinner" id="runSpinner" style="display: none;"></span>
+              <span class="btn-text">Run Agent</span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Live Policy Controls -->
+      <section class="card panel-card policy-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <span class="card-icon">🛡️</span>
+            <h2 class="card-title">Live Policy Controls</h2>
+          </div>
+          <span class="live-indicator">ACTIVE</span>
+        </div>
+        <p class="section-desc">Dynamic parameters enforced by PayAgent kernel before PayPal order creation.</p>
+
+        <form id="policyControlsForm" class="policy-form">
+          <!-- Control 1: Max Single Cap -->
+          <div class="control-group">
+            <div class="control-header">
+              <label for="maxSingleCapInput">Max Single Order Cap</label>
+              <div class="control-num-display">
+                $<input type="number" id="maxSingleCapInput" min="1" max="1000" step="5" value="100.00">
+              </div>
+            </div>
+            <input type="range" id="maxSingleCapSlider" min="5" max="500" step="5" value="100" class="custom-slider">
+            <div class="slider-limits">
+              <span>$5</span>
+              <span>$250</span>
+              <span>$500</span>
+            </div>
+          </div>
+
+          <!-- Control 2: Daily Spend Ceiling -->
+          <div class="control-group">
+            <div class="control-header">
+              <label for="dailyCeilingInput">Daily Spend Ceiling</label>
+              <div class="control-num-display">
+                $<input type="number" id="dailyCeilingInput" min="10" max="5000" step="10" value="500.00">
+              </div>
+            </div>
+            <input type="range" id="dailyCeilingSlider" min="50" max="2000" step="25" value="500" class="custom-slider">
+            <div class="slider-limits">
+              <span>$50</span>
+              <span>$1,000</span>
+              <span>$2,000</span>
+            </div>
+          </div>
+
+          <!-- Control 3: Human Approval Threshold -->
+          <div class="control-group">
+            <div class="control-header">
+              <label for="approvalThresholdInput">Human Approval Threshold</label>
+              <div class="control-num-display">
+                $<input type="number" id="approvalThresholdInput" min="1" max="500" step="1" value="25.00">
+              </div>
+            </div>
+            <input type="range" id="approvalThresholdSlider" min="5" max="100" step="1" value="25" class="custom-slider">
+            <div class="slider-limits">
+              <span>$5</span>
+              <span>$50</span>
+              <span>$100</span>
+            </div>
+          </div>
+
+          <button type="submit" id="savePolicyBtn" class="btn btn-secondary">
+            <span class="btn-text">Save Guardrails</span>
+          </button>
+        </form>
+      </section>
+    </aside>
+
+    <!-- Center Column: Decision Pipeline & Live Stream -->
+    <section class="panel-center">
+      <!-- Live Agent Decision Pipeline Header -->
+      <div class="card execution-stream-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <span class="card-icon">⚡</span>
+            <div>
+              <h2 class="card-title">Live Agent Decision Pipeline</h2>
+              <div class="execution-subtitle" id="executionSubtitle">Awaiting autonomous trigger or scenario selection...</div>
+            </div>
+          </div>
+          <div class="stream-status" id="streamStatusIndicator">
+            <span class="status-chip idle" id="pipelineStatusChip">IDLE</span>
+          </div>
+        </div>
+
+        <!-- 5-Stage Step Visual Stream -->
+        <div class="pipeline-stages" id="pipelineStages">
+          <!-- Stage 1 -->
+          <div class="stage-item" id="stage-1" data-stage="1">
+            <div class="stage-connector"></div>
+            <div class="stage-node">
+              <span class="node-num">1</span>
+              <svg class="node-icon icon-success" viewBox="0 0 16 16"><path d="M13.5 4.5l-7 7-3.5-3.5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+              <svg class="node-icon icon-fail" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+            </div>
+            <div class="stage-content">
+              <div class="stage-title">Intent Analysis</div>
+              <div class="stage-sub">LLM Semantic Parsing</div>
+            </div>
+          </div>
+
+          <!-- Stage 2 -->
+          <div class="stage-item" id="stage-2" data-stage="2">
+            <div class="stage-connector"></div>
+            <div class="stage-node">
+              <span class="node-num">2</span>
+              <svg class="node-icon icon-success" viewBox="0 0 16 16"><path d="M13.5 4.5l-7 7-3.5-3.5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+              <svg class="node-icon icon-fail" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+            </div>
+            <div class="stage-content">
+              <div class="stage-title">Catalog Match</div>
+              <div class="stage-sub">SKU & Vendor Discovery</div>
+            </div>
+          </div>
+
+          <!-- Stage 3 -->
+          <div class="stage-item" id="stage-3" data-stage="3">
+            <div class="stage-connector"></div>
+            <div class="stage-node">
+              <span class="node-num">3</span>
+              <svg class="node-icon icon-success" viewBox="0 0 16 16"><path d="M13.5 4.5l-7 7-3.5-3.5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+              <svg class="node-icon icon-fail" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+            </div>
+            <div class="stage-content">
+              <div class="stage-title">Policy Guardrail</div>
+              <div class="stage-sub">Pre-Flight Risk Check</div>
+            </div>
+          </div>
+
+          <!-- Stage 4 -->
+          <div class="stage-item" id="stage-4" data-stage="4">
+            <div class="stage-connector"></div>
+            <div class="stage-node">
+              <span class="node-num">4</span>
+              <svg class="node-icon icon-success" viewBox="0 0 16 16"><path d="M13.5 4.5l-7 7-3.5-3.5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+              <svg class="node-icon icon-fail" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+            </div>
+            <div class="stage-content">
+              <div class="stage-title">PayPal Orders v2</div>
+              <div class="stage-sub">Idempotent Authorization</div>
+            </div>
+          </div>
+
+          <!-- Stage 5 -->
+          <div class="stage-item" id="stage-5" data-stage="5">
+            <div class="stage-connector"></div>
+            <div class="stage-node">
+              <span class="node-num">5</span>
+              <svg class="node-icon icon-success" viewBox="0 0 16 16"><path d="M13.5 4.5l-7 7-3.5-3.5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+              <svg class="node-icon icon-fail" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+            </div>
+            <div class="stage-content">
+              <div class="stage-title">Settlement & Audit</div>
+              <div class="stage-sub">Receipt Capture</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Human Approval Action Card (Hidden by default, shown during AWAITING_APPROVAL) -->
+        <div class="approval-action-card" id="approvalActionCard" style="display: none;">
+          <div class="approval-card-icon">⚠️</div>
+          <div class="approval-card-body">
+            <div class="approval-card-header">
+              <span class="approval-tag">HUMAN APPROVAL REQUIRED</span>
+              <span class="approval-amount" id="approvalCardAmount">$32.00 USD</span>
+            </div>
+            <div class="approval-card-title" id="approvalCardTitle">Renew Vector Indexing API (Pinecone)</div>
+            <div class="approval-card-reason" id="approvalCardReason">
+              Transaction amount ($32.00) exceeds current autonomous approval threshold of $25.00.
+            </div>
+            <div class="approval-card-controls">
+              <button id="approveOrderBtn" class="btn btn-emerald">
+                <svg viewBox="0 0 16 16" fill="currentColor" class="btn-svg"><path d="M13.5 4.5l-7 7-3.5-3.5"/></svg>
+                Approve via PayPal Sandbox
+              </button>
+              <button id="rejectOrderBtn" class="btn btn-danger-ghost">
+                Reject Transaction
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Real-Time Telemetry Stream Console -->
+        <div class="telemetry-console">
+          <div class="console-header">
+            <div class="console-title">
+              <span class="term-dot"></span>
+              Live Execution Telemetry & Reasoning Stream
+            </div>
+            <div class="console-actions">
+              <button class="console-action-btn" id="clearConsoleBtn">Clear</button>
+            </div>
+          </div>
+          <div class="console-logs" id="consoleLogs">
+            <div class="log-line log-info">
+              <span class="log-ts">[00:00:00]</span>
+              <span class="log-tag tag-system">PAYAGENT-CORE</span>
+              <span class="log-msg">Kernel initialized. Guardrail policy active with PayPal Orders v2 Sandbox.</span>
+            </div>
+            <div class="log-line log-muted">
+              <span class="log-ts">[00:00:00]</span>
+              <span class="log-tag tag-ready">READY</span>
+              <span class="log-msg">Listening for execution triggers from UI or WebSocket (/ws)...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real-Time Transaction Ledger / Audit Log -->
+      <section class="card ledger-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <span class="card-icon">📑</span>
+            <div>
+              <h2 class="card-title">Real-Time Transaction Ledger & Audit Log</h2>
+              <div class="card-hint">Cryptographically verifiable immutable execution record</div>
+            </div>
+          </div>
+          <div class="ledger-filters">
+            <button class="filter-tab active" data-filter="ALL">All (<span id="ledgerCountAll">0</span>)</button>
+            <button class="filter-tab" data-filter="APPROVED">Approved (<span id="ledgerCountApproved">0</span>)</button>
+            <button class="filter-tab" data-filter="AWAITING">Pending (<span id="ledgerCountPending">0</span>)</button>
+            <button class="filter-tab" data-filter="BLOCKED">Blocked (<span id="ledgerCountBlocked">0</span>)</button>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table class="ledger-table" id="ledgerTable">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Item / Service</th>
+                <th>Vendor</th>
+                <th>Category</th>
+                <th>Amount</th>
+                <th>Policy Verdict</th>
+                <th>PayPal Order ID</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="ledgerTableBody">
+              <!-- Dynamically populated rows -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <!-- Full PayPal Payload & Inspector Modal -->
+  <div class="modal-backdrop" id="orderModalBackdrop" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-icon">📦</span>
+          <div>
+            <h3 class="modal-title" id="modalOrderId">PayPal Order Inspector</h3>
+            <span class="modal-subtitle" id="modalOrderSummary">Order Details and Sandbox Links</span>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="modalCloseBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-metrics-grid" id="modalMetrics">
+          <div class="metric-box">
+            <span class="metric-label">Amount</span>
+            <span class="metric-val" id="modalAmount">$0.00 USD</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Verdict</span>
+            <span class="metric-val" id="modalVerdict">-</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Status</span>
+            <span class="metric-val" id="modalStatus">-</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Sandbox Mode</span>
+            <span class="metric-val text-cyan">ORDERS_V2</span>
+          </div>
+        </div>
+
+        <div class="modal-section-title">Sandbox Action Link</div>
+        <div class="sandbox-link-container">
+          <a href="#" target="_blank" id="modalCheckoutLink" class="btn btn-paypal">
+            <svg class="paypal-btn-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944 3.72a.789.789 0 0 1 .78-.66h8.293c3.047 0 5.258 1.488 5.258 4.225 0 2.658-2.025 4.957-5.32 4.957h-3.32l-1.42 7.728a.79.79 0 0 1-.78.667h-1.36z"/>
+            </svg>
+            Open in PayPal Sandbox Checkout
+          </a>
+          <span class="link-hint">Simulate real user payment approval on PayPal Sandbox environment</span>
+        </div>
+
+        <div class="modal-section-title">Full Order JSON Payload</div>
+        <div class="code-viewer-container">
+          <div class="code-viewer-header">
+            <span>application/json</span>
+            <button class="copy-btn" id="copyJsonBtn">Copy JSON</button>
+          </div>
+          <pre class="code-viewer" id="modalJsonContent"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
