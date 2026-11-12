@@ -4,7 +4,7 @@ import { CommerceAgent, DEMO_SCENARIOS, type StepEvent } from "./agent/engine";
 import { MARKETPLACE_CATALOG } from "./agent/marketplace";
 import type { GuardrailPolicy } from "./agent/guardrails";
 
-const PORT = Number(process.env.PORT || 3000);
+const PORT = Number(process.env.PORT || 3456);
 const PUBLIC_DIR = join(import.meta.dir, "..", "public");
 
 const agent = new CommerceAgent();
@@ -66,11 +66,21 @@ const server = Bun.serve<{ id: string }>({
     // REST API Routes
     if (url.pathname === "/api/agent/run" && req.method === "POST") {
       try {
-        const body = (await req.json()) as { prompt?: string; scenarioId?: string };
+        const body = (await req.json()) as { prompt?: string; scenarioId?: string; dryRunSimulationOnly?: boolean };
         const result = await agent.run(body);
         return jsonResponse(result);
       } catch (err: any) {
         return jsonResponse({ error: err?.message || "Execution error" }, 500);
+      }
+    }
+
+    if (url.pathname === "/api/simulation/preflight" && req.method === "POST") {
+      try {
+        const body = (await req.json()) as { prompt: string; itemId?: string };
+        const report = await agent.getSimulationBox().runPreflight(body.prompt, body.itemId);
+        return jsonResponse(report);
+      } catch (err: any) {
+        return jsonResponse({ error: err?.message || "Simulation preflight error" }, 500);
       }
     }
 
@@ -108,6 +118,39 @@ const server = Bun.serve<{ id: string }>({
       }
     }
 
+    if (url.pathname === "/api/ledger/blocks" && req.method === "GET") {
+      return jsonResponse({
+        blocks: agent.getAuditLedger().getChain(),
+        verification: agent.getAuditLedger().verifyIntegrity(),
+      });
+    }
+
+    if (url.pathname === "/api/ledger/verify" && req.method === "POST") {
+      return jsonResponse(agent.getAuditLedger().verifyIntegrity());
+    }
+
+    if (url.pathname === "/api/devmode" && req.method === "GET") {
+      return jsonResponse({
+        devMode: agent.getDevMode(),
+        environment: agent.getSimulationBox().getEnvironment(),
+      });
+    }
+
+    if (url.pathname === "/api/devmode" && req.method === "POST") {
+      try {
+        const body = (await req.json()) as { devMode?: boolean; environment?: any };
+        if (body.devMode !== undefined) agent.setDevMode(body.devMode);
+        if (body.environment) agent.getSimulationBox().setEnvironment(body.environment);
+        return jsonResponse({
+          success: true,
+          devMode: agent.getDevMode(),
+          environment: agent.getSimulationBox().getEnvironment(),
+        });
+      } catch (err: any) {
+        return jsonResponse({ error: err?.message || "Failed to update devmode" }, 400);
+      }
+    }
+
     if (url.pathname === "/api/stats" && req.method === "GET") {
       return jsonResponse(agent.getStats());
     }
@@ -137,7 +180,7 @@ const server = Bun.serve<{ id: string }>({
       ws.send(
         JSON.stringify({
           type: "CONNECTED",
-          message: "Connected to PayAgent Real-Time Execution Trace Stream",
+          message: "Connected to PayAgent Hardened Telemetry Stream (DevMode: ON, SimulationBox: ACTIVE)",
         })
       );
     },
@@ -155,4 +198,4 @@ const server = Bun.serve<{ id: string }>({
   },
 });
 
-console.log(`[PayAgent] Server listening on http://localhost:${server.port}`);
+console.log(`[PayAgent] Hardened Server listening on http://localhost:${server.port}`);
