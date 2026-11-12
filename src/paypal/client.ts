@@ -24,8 +24,8 @@ export class PayPalClient {
   private isSimulation: boolean = false;
 
   constructor(config?: Partial<PayPalConfig>) {
-    this.clientId = config?.clientId || process.env.PAYPAL_CLIENT_ID || "";
-    this.clientSecret = config?.clientSecret || process.env.PAYPAL_CLIENT_SECRET || "";
+    this.clientId = config?.clientId !== undefined ? config.clientId : (process.env.PAYPAL_CLIENT_ID || "");
+    this.clientSecret = config?.clientSecret !== undefined ? config.clientSecret : (process.env.PAYPAL_CLIENT_SECRET || "");
     const isSandbox = config?.sandbox !== false;
     this.baseUrl = isSandbox
       ? "https://api-m.sandbox.paypal.com"
