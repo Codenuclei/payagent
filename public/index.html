@@ -114,13 +114,13 @@
           <!-- Scenario 2 -->
           <button class="scenario-btn" data-scenario="scenario-2">
             <div class="scenario-btn-top">
-              <span class="scenario-tag tag-blocked">BLOCKED BY CAP</span>
-              <span class="scenario-amount">$480.00</span>
+              <span class="scenario-tag tag-blocked">MALWARE BLOCKED</span>
+              <span class="scenario-amount">$8.00</span>
             </div>
-            <div class="scenario-btn-title">Order High-End H100 Cluster</div>
-            <div class="scenario-btn-desc">Exceeds configured $100.00 single-transaction threshold.</div>
+            <div class="scenario-btn-title">DarkWeb Exploit Scraper</div>
+            <div class="scenario-btn-desc">Disallowed malware category & security threat blocklist.</div>
             <div class="scenario-btn-footer">
-              <span class="vendor-tag">NVIDIA Direct</span>
+              <span class="vendor-tag">DarkBit Market</span>
               <span class="trigger-cta">Run Scenario →</span>
             </div>
           </button>
@@ -128,13 +128,13 @@
           <!-- Scenario 3 -->
           <button class="scenario-btn" data-scenario="scenario-3">
             <div class="scenario-btn-top">
-              <span class="scenario-tag tag-blocked">VENDOR BLOCKLIST</span>
-              <span class="scenario-amount">$8.00</span>
+              <span class="scenario-tag tag-blocked">BLOCKED BY CAP</span>
+              <span class="scenario-amount">$480.00</span>
             </div>
-            <div class="scenario-btn-title">Acquire Shady Miner Script</div>
-            <div class="scenario-btn-desc">Flagged untrusted vendor on security risk blocklist.</div>
+            <div class="scenario-btn-title">Enterprise H100 GPU Cluster</div>
+            <div class="scenario-btn-desc">Exceeds configured $35.00 single-transaction budget limit.</div>
             <div class="scenario-btn-footer">
-              <span class="vendor-tag">DarkBit Market</span>
+              <span class="vendor-tag">Quantum Compute Inc</span>
               <span class="trigger-cta">Run Scenario →</span>
             </div>
           </button>
@@ -145,10 +145,24 @@
               <span class="scenario-tag tag-warning">HUMAN APPROVAL</span>
               <span class="scenario-amount">$32.00</span>
             </div>
-            <div class="scenario-btn-title">Renew Vector Indexing API</div>
-            <div class="scenario-btn-desc">Exceeds $25 approval ceiling, requesting human sign-off.</div>
+            <div class="scenario-btn-title">Pinecone Vector Index M1</div>
+            <div class="scenario-btn-desc">Exceeds $25 approval ceiling, requesting operator sign-off.</div>
             <div class="scenario-btn-footer">
               <span class="vendor-tag">Pinecone Vector</span>
+              <span class="trigger-cta">Run Scenario →</span>
+            </div>
+          </button>
+
+          <!-- Scenario 5 -->
+          <button class="scenario-btn" data-scenario="scenario-5">
+            <div class="scenario-btn-top">
+              <span class="scenario-tag tag-blocked">INJECTION BLOCKED</span>
+              <span class="scenario-amount">$0.00</span>
+            </div>
+            <div class="scenario-btn-title">Adversarial Jailbreak Attack</div>
+            <div class="scenario-btn-desc">Prompt injection trying to override budget guardrails.</div>
+            <div class="scenario-btn-footer">
+              <span class="vendor-tag">Untrusted Prompt</span>
               <span class="trigger-cta">Run Scenario →</span>
             </div>
           </button>
@@ -356,6 +370,9 @@
               Transaction amount ($32.00) exceeds current autonomous approval threshold of $25.00.
             </div>
             <div class="approval-card-controls">
+              <a id="approvalCheckoutLink" target="_blank" href="#" class="btn btn-secondary" style="display: none; text-decoration: none;">
+                Open PayPal Checkout ↗
+              </a>
               <button id="approveOrderBtn" class="btn btn-emerald">
                 <svg viewBox="0 0 16 16" fill="currentColor" class="btn-svg"><path d="M13.5 4.5l-7 7-3.5-3.5"/></svg>
                 Approve via PayPal Sandbox
